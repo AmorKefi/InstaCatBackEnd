@@ -2,8 +2,9 @@ package com.example.instaCatBack.infrastructure.html;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,5 +26,9 @@ public class CatController {
 		return catService.getAllCats();
 	}
 
+	@PutMapping("/{catId}/vote")
+	public Cat voteFor(@PathVariable("catId") String catId) {
+		return catService.voteFor(catId);
+	}
+
 }
-	

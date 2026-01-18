@@ -11,6 +11,7 @@ import com.example.instaCatBack.domain.Cat;
 import com.example.instaCatBack.infrastructure.remote.CatsApiResponse;
 import com.example.instaCatBack.infrastructure.repository.CatRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service("CatService")
@@ -47,16 +48,25 @@ public class CatServiceImpl implements CatService {
 
 		List<Cat> fetchedCats = catsResponse.images().stream().map(cat -> new Cat(cat.id(), cat.url(), 0))
 				.collect(Collectors.toList());
-		
+
 		catRepository.saveAll(fetchedCats);
-		
-		log.info("Cats added successfully {} cats has been added",fetchedCats.size());
+
+		log.info("Cats added successfully {} cats has been added", fetchedCats.size());
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<Cat> getAllCats() {
 		return this.catRepository.findAll();
+	}
+
+	@Override
+	public Cat voteFor(String catId) {
+		Cat cat = this.catRepository.findById(catId)
+				.orElseThrow(() -> new EntityNotFoundException("cat not found : " + catId));
+		cat.setScore(cat.getScore() + 1);
+		this.catRepository.save(cat);
+		return cat;
 	}
 
 }
