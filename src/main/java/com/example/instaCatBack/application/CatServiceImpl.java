@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.instaCatBack.domain.Cat;
 import com.example.instaCatBack.infrastructure.remote.CatsApiResponse;
 import com.example.instaCatBack.infrastructure.repository.CatRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service("CatService")
@@ -51,6 +51,12 @@ public class CatServiceImpl implements CatService {
 		catRepository.saveAll(fetchedCats);
 		
 		log.info("Cats added successfully {} cats has been added",fetchedCats.size());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cat> getAllCats() {
+		return this.catRepository.findAll();
 	}
 
 }
